@@ -1,5 +1,6 @@
 import { createContext, useState } from 'react'
 import { EnUser } from '../models/auth'
+import jwtDecode from 'jwt-decode'
 
 export type AppContextType = {
   currentUser: EnUser
@@ -10,11 +11,23 @@ export const AppContext = createContext<AppContextType | null>(null)
 const AppContextProvider = (props: any) => {
   const { children } = props
 
-  const [currentUser, setCurrentUser] = useState<EnUser>({
-    username: '',
-    email: '',
-    picture: ''
-  })
+  let localUser: EnUser | null = null
+  try {
+    localUser = jwtDecode(localStorage.getItem('access_token'))
+  } catch (e) {
+    localUser = null
+  }
+  console.log(localUser)
+
+  const [currentUser, setCurrentUser] = useState<EnUser>(
+    localUser
+      ? localUser
+      : {
+          username: '',
+          email: '',
+          picture: ''
+        }
+  )
 
   const contextValue = {
     currentUser,

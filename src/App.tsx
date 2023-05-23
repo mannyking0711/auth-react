@@ -15,7 +15,8 @@ function App() {
   return (
     <GoogleOAuthProvider
       clientId={
-        '655028439560-rqh779jka3tg38gcbb4862pobvo0gmg5.apps.googleusercontent.com'
+        // '655028439560-rqh779jka3tg38gcbb4862pobvo0gmg5.apps.googleusercontent.com'
+        '680525957986-lhnso5q9nbqp66ginbnuagdeb0dou7mc.apps.googleusercontent.com'
       }
     >
       <MsalProvider instance={msalInstance}>

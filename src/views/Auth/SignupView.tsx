@@ -9,6 +9,7 @@ import { useGoogleLogin } from '@react-oauth/google'
 import axiosInstance from '../../axiosApi'
 import { loginRequest } from '../../utils/authConfig'
 import { useMsal } from '@azure/msal-react'
+import { AxiosError } from 'axios'
 
 export const SignupView = () => {
   const navigate = useNavigate()
@@ -69,45 +70,13 @@ export const SignupView = () => {
 
         notifySuccess('Sign up succeed')
         navigate('/login')
-      } catch (e) {
-        notifyError('Sign up failed')
+      } catch (e: Error | AxiosError) {
+        notifyError(e.response.data)
       }
 
       setLoading(false)
     }
   })
-
-  const googleSignup = useGoogleLogin({
-    onSuccess: async (codeResponse) => {
-      const userInfo = await axiosInstance
-        .get('https://www.googleapis.com/oauth2/v3/userinfo', {
-          headers: { Authorization: `Bearer ${codeResponse.access_token}` }
-        })
-        .then((res) => res.data)
-
-      setLoading(true)
-
-      try {
-        const result = await doSignupWithGoogle(userInfo)
-        console.log(result)
-        notifySuccess('Signup succeed')
-        navigate('/login')
-      } catch (e) {
-        notifyError('Signup failed')
-      }
-
-      setLoading(false)
-    },
-    onError: () => {
-      notifyError('We are facing issue while login through google')
-    },
-    flow: 'implicit'
-  })
-
-  const microsoftSignup = async () => {
-    const res = await instance.loginPopup(loginRequest)
-    console.log(res)
-  }
 
   return (
     <>
@@ -119,37 +88,11 @@ export const SignupView = () => {
             alt="Your Company"
           />
           <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-            Sign up to your account
+            Sign in to your account
           </h2>
         </div>
 
-        <div className="mt-10 flex flex-col gap-2 sm:mx-auto sm:w-full">
-          <button
-            className="flex w-full items-center justify-center rounded-sm p-2 text-sm shadow-md hover:text-blue-400"
-            onClick={() => googleSignup()}
-          >
-            <img
-              src="https://img.icons8.com/?id=V5cGWnc9R4xj&format=png"
-              width="20"
-            />
-            &nbsp;Sign up with Google
-          </button>
-          <button
-            className="flex w-full items-center justify-center rounded-sm p-2 text-sm shadow-md hover:text-blue-400"
-            onClick={() => microsoftSignup()}
-          >
-            <img src="https://img.icons8.com/?id=22989&format=png" width="20" />
-            &nbsp;Sign up with Microsoft
-          </button>
-        </div>
-
-        <div className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300 sm:mx-auto sm:w-full">
-          <p className="mx-4 mb-0 text-center font-semibold dark:text-white">
-            Or
-          </p>
-        </div>
-
-        <div className="sm:w-full">
+        <div className="mt-10 sm:w-full">
           <form className="" onSubmit={formik.handleSubmit}>
             <MTextInput
               name="name"

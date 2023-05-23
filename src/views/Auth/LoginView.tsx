@@ -11,6 +11,7 @@ import jwtDecode from 'jwt-decode'
 import { useGoogleLogin } from '@react-oauth/google'
 import { useMsal } from '@azure/msal-react'
 import { loginRequest } from '../../utils/authConfig'
+import { AxiosError } from 'axios'
 
 export const LoginView = () => {
   const navigate = useNavigate()
@@ -67,8 +68,8 @@ export const LoginView = () => {
 
         notifySuccess('Login succeed')
         navigate('/dashboard')
-      } catch (e) {
-        notifyError('Login failed')
+      } catch (e: Error | AxiosError) {
+        notifyError(e.response.data)
       }
 
       setLoading(false)
@@ -95,8 +96,8 @@ export const LoginView = () => {
 
         notifySuccess('Login succeed')
         navigate('/dashboard')
-      } catch (e) {
-        notifyError('Signup failed')
+      } catch (e: Error | AxiosError) {
+        notifyError(e.response.data)
       }
 
       setLoading(false)
@@ -135,14 +136,14 @@ export const LoginView = () => {
               src="https://img.icons8.com/?id=V5cGWnc9R4xj&format=png"
               width="20"
             />
-            &nbsp;Log in with Google
+            &nbsp;Continue with Google
           </button>
           <button
             className="flex w-full items-center justify-center rounded-sm p-2 text-sm shadow-md hover:text-blue-400"
             onClick={microsoftLogin}
           >
             <img src="https://img.icons8.com/?id=22989&format=png" width="20" />
-            &nbsp;Log in with Microsoft
+            &nbsp;Continue with Microsoft
           </button>
         </div>
 

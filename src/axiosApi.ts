@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseURL = 'http://127.0.0.1:8000/api/'
+const baseURL = `${location.protocol}//${location.hostname}:8000/api/`
 
 const axiosInstance = axios.create({
   baseURL: baseURL,
@@ -69,9 +69,11 @@ axiosInstance.interceptors.response.use(
       }
     }
 
+    /*
     if (error.response.status === 401) {
       window.location.href = '/login'
     }
+    */
 
     // specific error handling done elsewhere
     return Promise.reject(error)
