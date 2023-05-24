@@ -32,11 +32,7 @@ const useAuth = () => {
   const doLogout = () => {
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
-    setCurrentUser({
-      username: '',
-      email: '',
-      picture: ''
-    })
+    setCurrentUser()
   }
 
   return { doLogin, doLoginWithGoogle, doSignup, doSignupWithGoogle, doLogout }

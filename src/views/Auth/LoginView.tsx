@@ -61,14 +61,11 @@ export const LoginView = () => {
           password: values.password
         }))!.data
 
-        axiosInstance.defaults.headers['Authorization'] = 'JWT ' + result.access
-        localStorage.setItem('access_token', result.access)
-        localStorage.setItem('refresh_token', result.refresh)
-        setCurrentUser(jwtDecode(result.access))
+        setCurrentUser(result.access, result.refresh)
 
         notifySuccess('Login succeed')
         navigate('/dashboard')
-      } catch (e: Error | AxiosError) {
+      } catch (e: AxiosError | any) {
         notifyError(e.response.data)
       }
 
@@ -89,14 +86,11 @@ export const LoginView = () => {
       try {
         const result = (await doLoginWithGoogle(userInfo))!.data
 
-        axiosInstance.defaults.headers['Authorization'] = 'JWT ' + result.access
-        localStorage.setItem('access_token', result.access)
-        localStorage.setItem('refresh_token', result.refresh)
-        setCurrentUser(jwtDecode(result.access))
+        setCurrentUser(result.access, result.refresh)
 
         notifySuccess('Login succeed')
         navigate('/dashboard')
-      } catch (e: Error | AxiosError) {
+      } catch (e: AxiosError | any) {
         notifyError(e.response.data)
       }
 

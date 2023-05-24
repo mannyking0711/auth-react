@@ -5,18 +5,13 @@ import * as yup from 'yup'
 import { useFormik } from 'formik'
 import { useToastr } from '../../hooks/useToastr'
 import useAuth from '../../hooks/useAuth'
-import { useGoogleLogin } from '@react-oauth/google'
-import axiosInstance from '../../axiosApi'
-import { loginRequest } from '../../utils/authConfig'
-import { useMsal } from '@azure/msal-react'
 import { AxiosError } from 'axios'
 
 export const SignupView = () => {
   const navigate = useNavigate()
   const [loading, setLoading] = useState<boolean>(false)
-  const { instance } = useMsal()
 
-  const { doSignup, doSignupWithGoogle } = useAuth()
+  const { doSignup } = useAuth()
   const { notifySuccess, notifyError } = useToastr()
 
   const validationFormSchema = yup.object({
@@ -70,7 +65,7 @@ export const SignupView = () => {
 
         notifySuccess('Sign up succeed')
         navigate('/login')
-      } catch (e: Error | AxiosError) {
+      } catch (e: AxiosError | any) {
         notifyError(e.response.data)
       }
 

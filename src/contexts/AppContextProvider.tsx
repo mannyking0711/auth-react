@@ -1,10 +1,11 @@
 import { createContext, useState } from 'react'
 import { EnUser } from '../models/auth'
 import jwtDecode from 'jwt-decode'
+import axiosInstance from '../axiosApi'
 
 export type AppContextType = {
   currentUser: EnUser
-  setCurrentUser: (user: EnUser) => void
+  setCurrentUser: (accessToken?: string, refreshToken?: string) => void
 }
 export const AppContext = createContext<AppContextType | null>(null)
 
@@ -13,7 +14,7 @@ const AppContextProvider = (props: any) => {
 
   let localUser: EnUser | null = null
   try {
-    localUser = jwtDecode(localStorage.getItem('access_token'))
+    localUser = jwtDecode(localStorage.getItem('access_token')!)
   } catch (e) {
     localUser = null
   }
@@ -31,8 +32,22 @@ const AppContextProvider = (props: any) => {
 
   const contextValue = {
     currentUser,
-    setCurrentUser: (user: EnUser) => {
-      setCurrentUser(user)
+    setCurrentUser: (accessToken?: string, refreshToken?: string) => {
+      if (accessToken === undefined || refreshToken === undefined) {
+        localStorage.removeItem('access_token')
+        localStorage.removeItem('refresh_token')
+        axiosInstance.defaults.headers['Authorization'] = null
+        setCurrentUser({
+          username: '',
+          email: '',
+          picture: ''
+        })
+      } else {
+        localStorage.setItem('access_token', accessToken)
+        localStorage.setItem('refresh_token', refreshToken)
+        axiosInstance.defaults.headers['Authorization'] = 'JWT ' + accessToken
+        setCurrentUser(jwtDecode(accessToken))
+      }
     }
   }
 
