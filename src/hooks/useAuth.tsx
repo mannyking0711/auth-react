@@ -25,17 +25,13 @@ const useAuth = () => {
     })
   }
 
-  const doSignupWithGoogle = async (user: any) => {
-    return await axiosInstance.post('/user/create_google/', user)
-  }
-
   const doLogout = () => {
     localStorage.removeItem('access_token')
     localStorage.removeItem('refresh_token')
     setCurrentUser()
   }
 
-  return { doLogin, doLoginWithGoogle, doSignup, doSignupWithGoogle, doLogout }
+  return { doLogin, doLoginWithGoogle, doSignup, doLogout }
 }
 
 export default useAuth

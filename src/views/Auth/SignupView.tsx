@@ -88,7 +88,7 @@ export const SignupView = () => {
         </div>
 
         <div className="mt-10 sm:w-full">
-          <form className="" onSubmit={formik.handleSubmit}>
+          <form className="flex flex-col" onSubmit={formik.handleSubmit}>
             <MTextInput
               name="name"
               type="text"

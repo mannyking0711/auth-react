@@ -1,5 +1,5 @@
 import { MTextInput } from '../../components/Input/MTextInput'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import * as yup from 'yup'
 import { useFormik } from 'formik'
@@ -7,11 +7,11 @@ import { useToastr } from '../../hooks/useToastr'
 import axiosInstance from '../../axiosApi'
 import useAuth from '../../hooks/useAuth'
 import { AppContext, AppContextType } from '../../contexts/AppContextProvider'
-import jwtDecode from 'jwt-decode'
 import { useGoogleLogin } from '@react-oauth/google'
 import { useMsal } from '@azure/msal-react'
 import { loginRequest } from '../../utils/authConfig'
 import { AxiosError } from 'axios'
+import jwtDecode from 'jwt-decode'
 
 export const LoginView = () => {
   const navigate = useNavigate()
@@ -107,6 +107,16 @@ export const LoginView = () => {
     console.log(res)
   }
 
+  useEffect(() => {
+    const accessToken = localStorage.getItem('access-token')
+    const refreshToken = localStorage.getItem('refresh-token')
+    try {
+      setCurrentUser(accessToken!, refreshToken!)
+    } catch (e: any) {
+
+    }
+  }, [])
+
   return (
     <>
       <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 sm:mx-auto sm:max-w-sm lg:px-8">
@@ -129,6 +139,7 @@ export const LoginView = () => {
             <img
               src="https://img.icons8.com/?id=V5cGWnc9R4xj&format=png"
               width="20"
+              alt="google"
             />
             &nbsp;Continue with Google
           </button>
@@ -136,7 +147,11 @@ export const LoginView = () => {
             className="flex w-full items-center justify-center rounded-sm p-2 text-sm shadow-md hover:text-blue-400"
             onClick={microsoftLogin}
           >
-            <img src="https://img.icons8.com/?id=22989&format=png" width="20" />
+            <img
+              src="https://img.icons8.com/?id=22989&format=png"
+              width="20"
+              alt="microsoft"
+            />
             &nbsp;Continue with Microsoft
           </button>
         </div>
@@ -148,7 +163,7 @@ export const LoginView = () => {
         </div>
 
         <div className="sm:mx-auto sm:w-full">
-          <form className="" onSubmit={formik.handleSubmit}>
+          <form className="flex flex-col" onSubmit={formik.handleSubmit}>
             <MTextInput
               name="email"
               type="email"

@@ -8,6 +8,10 @@ import AppContextProvider from './contexts/AppContextProvider'
 import { msalConfig } from './utils/authConfig'
 import { PublicClientApplication } from '@azure/msal-browser'
 import { MsalProvider } from '@azure/msal-react'
+import { AppLayout } from './views/Layout/AppLayout'
+import { RequestView } from './views/Main/RequestView'
+import { DomainsView } from './views/Main/DomainsView'
+import { TrackView } from './views/Main/TrackView'
 
 const msalInstance = new PublicClientApplication(msalConfig)
 
@@ -21,12 +25,17 @@ function App() {
       <MsalProvider instance={msalInstance}>
         <AppContextProvider>
           <BrowserRouter>
-            <Routes>
-              <Route path="/login" element={<LoginView />} />
-              <Route path="/signup" element={<SignupView />} />
-              <Route path="/dashboard" element={<DashboardView />} />
-              <Route path="*" element={<Navigate to="/login" />} />
-            </Routes>
+            <AppLayout>
+              <Routes>
+                <Route path="/login" element={<LoginView />} />
+                <Route path="/signup" element={<SignupView />} />
+                <Route path="/dashboard" element={<DashboardView />} />
+                <Route path="/request" element={<RequestView />} />
+                <Route path="/domains" element={<DomainsView />} />
+                <Route path="/track/:track_id" element={<TrackView />} />
+                <Route path="*" element={<Navigate to="/dashboard" />} />
+              </Routes>
+            </AppLayout>
           </BrowserRouter>
           <ToastContainer />
         </AppContextProvider>

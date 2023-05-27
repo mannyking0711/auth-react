@@ -3,7 +3,11 @@ import { EnUser } from '../models/auth'
 import jwtDecode from 'jwt-decode'
 import axiosInstance from '../axiosApi'
 
+type IPageName = 'dashboard' | 'request_scan' | 'domains' | 'login'
+
 export type AppContextType = {
+  currentPage: IPageName
+  setCurrentPage: (pageName: IPageName) => void
   currentUser: EnUser
   setCurrentUser: (accessToken?: string, refreshToken?: string) => void
 }
@@ -18,7 +22,6 @@ const AppContextProvider = (props: any) => {
   } catch (e) {
     localUser = null
   }
-  console.log(localUser)
 
   const [currentUser, setCurrentUser] = useState<EnUser>(
     localUser
@@ -30,7 +33,11 @@ const AppContextProvider = (props: any) => {
         }
   )
 
+  const [currentPage, setCurrentPage] = useState<string>('')
+
   const contextValue = {
+    currentPage,
+    setCurrentPage,
     currentUser,
     setCurrentUser: (accessToken?: string, refreshToken?: string) => {
       if (accessToken === undefined || refreshToken === undefined) {
