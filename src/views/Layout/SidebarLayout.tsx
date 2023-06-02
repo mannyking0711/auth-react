@@ -13,7 +13,6 @@ export const SidebarLayout = () => {
     navigate('/login')
   }
 
-  console.log(currentUser.username)
   if (!currentUser.username) return null
 
   return (

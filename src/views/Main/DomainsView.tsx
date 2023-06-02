@@ -3,22 +3,55 @@ import { AppContext, AppContextType } from '../../contexts/AppContextProvider'
 import { formatDateTime } from '../../utils'
 import axiosInstance from 'axiosApi'
 import { Link } from 'react-router-dom'
+import Swal from 'sweetalert2'
+import { useToastr } from '../../hooks/useToastr'
 
 export const DomainsView = () => {
   const { setCurrentPage } = useContext(AppContext) as AppContextType
   const [tableData, setTableData] = useState<any[]>([])
   const [query, setQuery] = useState<string>('')
+  const { notifyError } = useToastr()
 
   useEffect(() => {
     setCurrentPage('domains')
-    axiosInstance.get('track').then(res => {
-      setTableData(res.data);
+    axiosInstance.get('track').then((res) => {
+      setTableData(res.data)
     })
   }, [])
 
   const onSearch = (e: ChangeEvent<HTMLInputElement>) => {
-    const searchParam = (e.target as HTMLInputElement).value;
+    const searchParam = (e.target as HTMLInputElement).value
     setQuery(searchParam)
+  }
+
+  const onRemove = (track: string) => {
+    Swal.fire({
+      text: 'Do you want to remove it?',
+      icon: 'warning',
+      showCancelButton: true,
+      showConfirmButton: true
+    }).then((ev) => {
+      if (ev.isConfirmed) {
+        axiosInstance
+          .delete('scan_request', {
+            params: {
+              track: track
+            }
+          })
+          .then(() => {
+            Swal.fire({
+              text: 'Successfully deleted',
+              icon: 'success',
+              showCancelButton: false,
+              showConfirmButton: false,
+              timer: 1500
+            })
+          })
+          .catch((err) => {
+            notifyError(err.response.data.message)
+          })
+      }
+    })
   }
   return (
     <>
@@ -56,7 +89,10 @@ export const DomainsView = () => {
         <table className="w-full text-left text-sm text-gray-500 dark:text-gray-400">
           <thead className="bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-4 font-medium text-gray-900">
+              <th
+                scope="col"
+                className="w-3 px-6 py-4 font-medium text-gray-900"
+              >
                 No
               </th>
               <th scope="col" className="px-6 py-4 font-medium text-gray-900">
@@ -65,47 +101,42 @@ export const DomainsView = () => {
               <th scope="col" className="px-6 py-4 font-medium text-gray-900">
                 Start Time
               </th>
-              <th scope="col" className="px-6 py-4 font-medium text-gray-900">
-                Operated Time / s
-              </th>
-              <th scope="col"></th>
+              <th scope="col" className="w-24"></th>
             </tr>
           </thead>
           <tbody>
-            {tableData.filter(i => {
-              if (query)
-                return i.domain.includes(query)
-              return true
-            }).map((row, index) => (
-              <tr key={index + 1}>
-                <td className="px-6 py-4">{index + 1}</td>
-                <td className="px-6 py-4">{row.domain}</td>
-                <td className="px-6 py-4">{formatDateTime(row.created_at)}</td>
-                <td className="px-6 py-4">
-                  {row.finished_at === null ? (
-                    <span className="rounded-md bg-red-400 p-1 text-white">
-                      Pending
-                    </span>
-                  ) : (
-                    (new Date(row.finished_at).getTime() - new Date(row.created_at).getTime()) / 1000
-                  )}
-                </td>
-                <td className="px-6 py-4">
-                  {row.finished_at === null ? (
-                    ''
-                  ) : (
+            {tableData
+              .filter((i) => {
+                if (query) return i.domain.includes(query)
+                return true
+              })
+              .map((row, index) => (
+                <tr key={index + 1}>
+                  <td className="px-6 py-4">{index + 1}</td>
+                  <td className="px-6 py-4">{row.domain}</td>
+                  <td className="px-6 py-4">
+                    {formatDateTime(row.created_at)}
+                  </td>
+                  <td className="px-3 py-4">
                     <Link
-                      to={"/track/" + row.track}
+                      to={'/track/' + row.track}
                       className="mr-2 text-gray-400 hover:text-gray-800"
                     >
                       <i className="material-icons-outlined text-base">
                         visibility
                       </i>
                     </Link>
-                  )}
-                </td>
-              </tr>
-            ))}
+                    <a
+                      onClick={() => onRemove(row.track)}
+                      className="mr-2 cursor-pointer text-gray-400 hover:text-gray-800"
+                    >
+                      <i className="material-icons-outlined text-base">
+                        delete
+                      </i>
+                    </a>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
         {tableData.length === 0 ? (

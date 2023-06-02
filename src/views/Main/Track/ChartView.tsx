@@ -61,17 +61,16 @@ export const ChartView = ({ value = {}, name }: IProps) => {
   )
 
   useEffect(() => {
-    console.log(value)
     setOptions({
       ...options,
       series: [
         {
           name: 'Brands',
           colorByPoint: true,
-          data: Object.keys(value).map(key => {
+          data: Object.keys(value).map((key) => {
             return {
               name: key,
-              y: value[key],
+              y: value[key]
             }
           })
         }

@@ -6,11 +6,13 @@ import * as yup from 'yup'
 import { useFormik } from 'formik'
 import { Link } from 'react-router-dom'
 import axiosInstance from 'axiosApi'
+import { useToastr } from '../../hooks/useToastr'
 
 export const RequestView = () => {
   const { setCurrentPage } = useContext(AppContext) as AppContextType
   const [lastQuery, setLastQuery] = useState('')
   const [track, setTrack] = useState('')
+  const { notifySuccess, notifyError } = useToastr()
 
   useEffect(() => {
     setCurrentPage('request_scan')
@@ -31,13 +33,17 @@ export const RequestView = () => {
     },
     validationSchema: validationFormSchema,
     onSubmit: async (values) => {
-      setLastQuery(values.domain)
-      axiosInstance.post('/scan_request', {
-        domain: values.domain
-      }).then((res) => {
-        console.log(res.data.track);
-        setTrack(res.data.track);
-      })
+      axiosInstance
+        .post('/scan_request', {
+          domain: values.domain
+        })
+        .then((res) => {
+          setLastQuery(values.domain)
+          setTrack(res.data.track)
+        })
+        .catch((err) => {
+          notifyError(err.response.data.message)
+        })
     }
   })
   return (

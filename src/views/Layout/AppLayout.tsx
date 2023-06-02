@@ -1,5 +1,5 @@
 import { SidebarLayout } from './SidebarLayout'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect } from 'react'
 
 type IProps = {
   children: ReactNode

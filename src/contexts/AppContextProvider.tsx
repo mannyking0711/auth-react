@@ -18,7 +18,9 @@ const AppContextProvider = (props: any) => {
 
   let localUser: EnUser | null = null
   try {
-    localUser = jwtDecode(localStorage.getItem('access_token')!)
+    const user: any = jwtDecode(localStorage.getItem('access_token')!)
+    if (user.exp >= Date.now() / 1000) localUser = user
+    else localUser = null
   } catch (e) {
     localUser = null
   }

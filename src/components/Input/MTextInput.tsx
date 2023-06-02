@@ -5,7 +5,7 @@ type IProps = {
   type?: 'text' | 'password' | 'email'
   placeholder?: string
   value: string
-  disabled: boolean
+  disabled?: boolean
   onChange: ChangeEventHandler
 }
 
